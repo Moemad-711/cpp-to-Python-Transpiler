@@ -92,9 +92,10 @@ write_new_lang(Stream, do_while(Stmt, Conds)):-
 	write(Stream, '    if '),
 	write_new_lang(Stream, Conds),
 	write(Stream, ':\n'),
-	write( Stream,'        break'), 
-	nl(Stream).
-
+	write( Stream,'        continue\n'),
+	write(Stream, '    else :\n'),
+	write( Stream,'        break\n').
+	
 %%% Write if_Stmt %%%
 write_new_lang(Stream, if(Conds, Stmt)):-
 	write(Stream, 'if '),
@@ -107,17 +108,7 @@ write_new_lang(Stream, if(Conds, Stmt1, Else, Stmt2)):-
 	write_new_lang(Stream, Conds),
 	write(Stream, ':\n'),
 	write_new_lang(Stream, Stmt1),
-	write(Stream, Else),
-	write(Stream, ' :\n'),
-	write_new_lang(Stream,Stmt2).
-
-write_new_lang(Stream, if(Conds, Stmt1, Stmt2)):-
-	write(Stream, 'if '),
-	write_new_lang(Stream, Conds),
-	write(Stream, ':'),
-	nl(Stream),	
-	write_new_lang(Stream, Stmt).
-
+	(memberchk(Else, ['else']), write(Stream, 'else :\n'), write_new_lang(Stream,Stmt2)).
 
 %%% Write Conditions %%%
 write_new_lang(Stream, conditions(Cond1, Op1, _, Cond2)):-
@@ -208,9 +199,7 @@ stmts(statments(Stmt, Stmts)) --> stmt(Stmt), stmts(Stmts).
 
 %%%%%%%%%% If Rules %%%%%%%%%%%%
 if_stmt(if(Conds, Stmt)) --> ['if'], ['('], conditions(Conds), [')'], stmt(Stmt).
-
 if_stmt(if(Conds, Stmt1, 'else', Stmt2)) --> ['if'], ['('], conditions(Conds), [')'], stmt(Stmt1), ['else'], stmt(Stmt2).
-if_stmt(if(Conds, Stmt1, 'elif', Stmt2)) --> ['if'], ['('], conditions(Conds), [')'], stmt(Stmt1), ['else'], ['if'], stmt(Stmt2).
 
 %%%%%%%%%% Do While Rules %%%%%%%%%%%%
 do_while_stmt(do_while(Stmt, Conds)) --> ['do'], stmt(Stmt), ['while'], ['('], conditions(Conds), [')'], [';'].
