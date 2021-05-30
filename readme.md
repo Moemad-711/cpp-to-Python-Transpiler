@@ -14,7 +14,7 @@ This project read c++ code from source file (e.g. test.txt or any other but plea
 
 ## To Run the Project do the following:
 1. Make sure to download and install SWI-Prolog software.
-2. Make sure that The SWI prolog directory (Usually in C:\Program Files\swipl\bin) to the PATH Enviroment Variable.
+2. Make sure that The SWI prolog directory (Usually in C:\Program Files\swipl\bin) is added to the PATH Enviroment Variable.
 3. Open a CMD or Shell terminal in the project folder.
 4. Run the following Command " swipl -s .\Compiler_Design_Prolog.pl " to run the SWI-Prolog.
 5. Run " parse_code_from_file. " to run the program.
