@@ -20,8 +20,8 @@ This project read c++ code from source file (e.g. test.txt or any other but plea
 5. Run " parse_code_from_file. " to run the program.
 
 ## Project Authors:
-1. Mohammed Emadeldin Mahmoud Radwan Mohammed El-Seoudi
-2. Mohammed Aly Ahmed Al
-3. Mahmoud Mamdouh Gaber
-4. Mariam Mohammed Ibrahim
-5. Nada Magdy Zaki
+* Mohammed Emadeldin Mahmoud Radwan Mohammed El-Seoudi
+* Mohammed Aly Ahmed AlY
+* Mahmoud Mamdouh Gaber
+* Mariam Mohammed Ibrahim
+* Nada Magdy Zaki
