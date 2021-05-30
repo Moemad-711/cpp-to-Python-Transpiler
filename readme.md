@@ -1,6 +1,6 @@
 # C++ to Python Transpiler
 
-This project read c++ code from source file (test.txt or any other but please update the path to the source file) and outputs the code (output.txt or any other but please update the path to the source file) in Python language for the Compiler Design Course.
+This project read c++ code from source file (e.g. test.txt or any other but please update the path to the source file) and outputs the code (e.g. output.txt or any other but please update the path to the source file) in Python language for the Compiler Design Course.
 
 ## The project is written in prolog and support the following statements:
 
