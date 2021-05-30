@@ -53,7 +53,8 @@ parse_and_write(OutputFile,Input):-
 	write_new_lang(OutputStream, Tree),
 	close(OutputStream).	%write_to_file(Tree).
 
-parse_and_write(OutputFile):- 
+
+parse_and_write(OutputFile):- %%%%% for testing Purposes 
 	phrase(parser(Tree), [while,'(',x,<,20,')','{',x,=,x,+,1,;,'}']),
 	%phrase(parser(Tree),[x,=,x,+,1,;]),
 	%write(Tree).
