@@ -9,11 +9,11 @@
 % Read input Tokenizing 
 parse_code_from_file:-
 	%%%%%%%%%%%%%%% Edit Source file Path %%%%%%%%%%%%%%%
- 	read_file_to_string('D:\\4th Computer\\Compiler Design\\test.txt',InputString,[]),
+ 	read_file_to_string('.\\test.txt',InputString,[]),
  	string_tokenizer(InputString,TokenizedList),
 	maplist(atom_string, Tree, TokenizedList),
 	%%%%%%%%%%%%%%% Edit Output File Path %%%%%%%%%%%%%%%
-	parse_and_write('D:\\4th Computer\\Compiler Design\\output.txt',Tree).
+	parse_and_write('.\\output.txt',Tree).
 
 string_tokenizer(Input,Output):-
 	normalize_space(atom(S0), Input), % remove spaces in start and end of string %
@@ -39,15 +39,9 @@ change_character_in_string(Old_Char,New_Char,String,New_String):-
 	atomic_list_concat(Atoms,Old_Char, String),
 	atomic_list_concat(Atoms,New_Char, New_String).
 
-%convert
-convert([], []). % there are no elements in list Xs
-convert([H|Ts], [Elm|Es]) :- % This is meant to be executed if there are elements in the list.
-   string_to_atom(H, Elm), % Built in function from [here][1].
-   convert(Ts, Es). % The recursive call to the tail T
-
 %%%%%%%%%%%%%%%%% Parse and Write %%%%%%%%%%%%%%%%%%%%%%%
-parse_and_write(OutputFile,Input):- 
-	phrase(parser(Tree),Input),
+parse_and_write(OutputFile,InputTree):- 
+	phrase(parser(Tree),InputTree),
 	open(OutputFile,write,OutputStream),
 	write(Tree),
 	write_new_lang(OutputStream, Tree),
@@ -64,8 +58,6 @@ parse_and_write(OutputFile):- %%%%% for testing Purposes
 
 %%% Write Statment %%%
 write_new_lang(Stream, statment(Tree)):-
-	%write('hi stmt'), nl,
-	%write(Tree), nl,
 	write_new_lang(Stream, Tree).
 
 %%% Write Statments %%%
@@ -73,11 +65,10 @@ write_new_lang(Stream, statments(Stmt, Stmts)):-
 	%rite('hi stmts'),
 	write(Stream, '    '),
 	write_new_lang(Stream, Stmt),
-	write_new_lang(Stream, Stmts),
-	nl(Stream).
+	write_new_lang(Stream, Stmts).
 
 write_new_lang(Stream, statments([])):-
-	nl(Stream).
+	write(Stream,'').
 
 %%% Write Assign_Stmt %%%
 write_new_lang(Stream, assign_stmt(ID, Equal, Expr)):-
@@ -87,23 +78,55 @@ write_new_lang(Stream, assign_stmt(ID, Equal, Expr)):-
 	nl(Stream).
 
 %%% Write While_Stmt %%%
-write_new_lang(Stream, while(Cond, Stmt)):-
+write_new_lang(Stream, while(Conds, Stmt)):-
 	write(Stream, 'while '),
-	write_new_lang(Stream, Cond),
+	write_new_lang(Stream, Conds),
 	write(Stream, ':'),
 	nl(Stream),
 	write_new_lang(Stream, Stmt).
 
-%%% Write Condition %%%
+%%% Write Do_While_Stmt %%%
+write_new_lang(Stream, do_while(Stmt, Conds)):-
+	write(Stream, 'while  True :\n'),
+	write_new_lang(Stream, Stmt),
+	write(Stream, '    if '),
+	write_new_lang(Stream, Conds),
+	write(Stream, ':\n'),
+	write( Stream,'        break'), 
+	nl(Stream).
+
+%%% Write if_Stmt %%%
+write_new_lang(Stream, if(Conds, Stmt)):-
+	write(Stream, 'if '),
+	write_new_lang(Stream, Conds),
+	write(Stream, ':\n'),
+	write_new_lang(Stream, Stmt).
+
+write_new_lang(Stream, if(Conds, Stmt1, Else, Stmt2)):-
+	write(Stream, 'if '),
+	write_new_lang(Stream, Conds),
+	write(Stream, ':\n'),
+	write_new_lang(Stream, Stmt1),
+	write(Stream, Else),
+	write(Stream, ' :\n'),
+	write_new_lang(Stream,Stmt2).
+
+write_new_lang(Stream, if(Conds, Stmt1, Stmt2)):-
+	write(Stream, 'if '),
+	write_new_lang(Stream, Conds),
+	write(Stream, ':'),
+	nl(Stream),	
+	write_new_lang(Stream, Stmt).
+
+
+%%% Write Conditions %%%
 write_new_lang(Stream, conditions(Cond1, Op1, _, Cond2)):-
 	write_new_lang(Stream, Cond1),
 	( memberchk(Op1, ['&']), write(Stream, 'and ') | memberchk(Op1, ['|']), write(Stream, 'or ')),
-	write_new_lang(Stream, Cond2),
-	write(Stream, ' ').
+	write_new_lang(Stream, Cond2).
 
 write_new_lang(Stream, conditions(Cond1)):-
-	write_new_lang(Stream, Cond1),
-	write(Stream, ' ').
+	write_new_lang(Stream, Cond1).
 
 %%% Write Condition %%%
 write_new_lang(Stream, condition(Expr1, Op1, Op2, Expr2)):-
@@ -175,11 +198,22 @@ parser(Tree) --> stmt(Tree).
 %%%%%%%%%% Statment Rules %%%%%%%%%%%%
 stmt(statment(Tree)) --> while_stmt(Tree).
 stmt(statment(Tree)) --> assign_stmt(Tree).
+stmt(statment(Tree)) --> do_while_stmt(Tree).
+stmt(statment(Tree)) --> if_stmt(Tree).
 stmt(statment(Tree)) --> ['{'], stmts(Tree), ['}'].
 
 %%%%%%%%%% Statments Rules %%%%%%%%%%%%
 stmts(statments([])) --> [].
 stmts(statments(Stmt, Stmts)) --> stmt(Stmt), stmts(Stmts).
+
+%%%%%%%%%% If Rules %%%%%%%%%%%%
+if_stmt(if(Conds, Stmt)) --> ['if'], ['('], conditions(Conds), [')'], stmt(Stmt).
+
+if_stmt(if(Conds, Stmt1, 'else', Stmt2)) --> ['if'], ['('], conditions(Conds), [')'], stmt(Stmt1), ['else'], stmt(Stmt2).
+if_stmt(if(Conds, Stmt1, 'elif', Stmt2)) --> ['if'], ['('], conditions(Conds), [')'], stmt(Stmt1), ['else'], ['if'], stmt(Stmt2).
+
+%%%%%%%%%% Do While Rules %%%%%%%%%%%%
+do_while_stmt(do_while(Stmt, Conds)) --> ['do'], stmt(Stmt), ['while'], ['('], conditions(Conds), [')'], [';'].
 
 %%%%%%%%%% While Rules %%%%%%%%%%%%
 while_stmt(while(Conds, Stmt)) --> ['while'], ['('], conditions(Conds), [')'], stmt(Stmt).
