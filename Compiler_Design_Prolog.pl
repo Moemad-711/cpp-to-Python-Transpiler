@@ -70,32 +70,6 @@ write_new_lang(Stream, statments(Stmt, Stmts)):-
 write_new_lang(Stream, statments([])):-
 	write(Stream,'').
 
-%%% Write Assign_Stmt %%%
-write_new_lang(Stream, assign_stmt(ID, Equal, Expr)):-
-	write(Stream, ID),
-	write(Stream, Equal),
-	write_new_lang(Stream, Expr),
-	nl(Stream).
-
-%%% Write While_Stmt %%%
-write_new_lang(Stream, while(Conds, Stmt)):-
-	write(Stream, 'while '),
-	write_new_lang(Stream, Conds),
-	write(Stream, ':'),
-	nl(Stream),
-	write_new_lang(Stream, Stmt).
-
-%%% Write Do_While_Stmt %%%
-write_new_lang(Stream, do_while(Stmt, Conds)):-
-	write(Stream, 'while  True :\n'),
-	write_new_lang(Stream, Stmt),
-	write(Stream, '    if '),
-	write_new_lang(Stream, Conds),
-	write(Stream, ':\n'),
-	write( Stream,'        continue\n'),
-	write(Stream, '    else :\n'),
-	write( Stream,'        break\n').
-	
 %%% Write if_Stmt %%%
 write_new_lang(Stream, if(Conds, Stmt)):-
 	write(Stream, 'if '),
@@ -109,6 +83,78 @@ write_new_lang(Stream, if(Conds, Stmt1, Else, Stmt2)):-
 	write(Stream, ':\n'),
 	write_new_lang(Stream, Stmt1),
 	(memberchk(Else, ['else']), write(Stream, 'else :\n'), write_new_lang(Stream,Stmt2)).
+
+write_new_lang(Stream, assign_stmt(_,_,_,ID, Equal, Expr)):-
+	write(Stream, ID),
+	write(Stream, Equal),
+	write_new_lang(Stream, Expr),
+	nl(Stream).
+
+%%% Write Do_While_Stmt %%%
+write_new_lang(Stream, do_while(Stmt, Conds)):-
+	write(Stream, 'while  True :\n'),
+	write_new_lang(Stream, Stmt),
+	write(Stream, '    if '),
+	write_new_lang(Stream, Conds),
+	write(Stream, ':\n'),
+	write( Stream,'        continue\n'),
+	write(Stream, '    else :\n'),
+	write( Stream,'        break\n').
+
+%%% Write While_Stmt %%%
+write_new_lang(Stream, while(Conds, Stmt)):-
+	write(Stream, 'while '),
+	write_new_lang(Stream, Conds),
+	write(Stream, ':'),
+	nl(Stream),
+	write_new_lang(Stream, Stmt).
+
+	
+%%% Write Assign_Stmt %%%
+write_new_lang(Stream, assign_stmt(ID, Equal, Expr)):-
+	write(Stream, ID),
+	write(Stream, Equal),
+	write_new_lang(Stream, Expr),
+	nl(Stream).
+
+write_new_lang(Stream, assign_stmt(_,ID, Equal, Expr)):-
+	write(Stream, ID),
+	write(Stream, Equal),
+	write_new_lang(Stream, Expr),
+	nl(Stream).
+
+write_new_lang(Stream, assign_stmt(_,_,ID, Equal, Expr)):-
+	write(Stream, ID),
+	write(Stream, Equal),
+	write_new_lang(Stream, Expr),
+	nl(Stream).
+
+write_new_lang(Stream, assign_stmt(_,_,_,ID, Equal, Expr)):-
+	write(Stream, ID),
+	write(Stream, Equal),
+	write_new_lang(Stream, Expr),
+	nl(Stream).
+
+%%% Write Assign_Stmt %%%
+write_new_lang(Stream, declare(ID, Equal, Expr)):-
+	write(Stream, ID),
+	write(Stream, '= None'),
+	nl(Stream).
+
+write_new_lang(Stream, declare(_,ID)):-
+	write(Stream, ID),
+	write(Stream, '= None'),
+	nl(Stream).
+
+write_new_lang(Stream, declare(_,_,ID)):-
+	write(Stream, ID),
+	write(Stream, '= None'),
+	nl(Stream).
+
+write_new_lang(Stream, declare(_,_,_,ID)):-
+	write(Stream, ID),
+	write(Stream, '= None'),
+	nl(Stream).
 
 %%% Write Conditions %%%
 write_new_lang(Stream, conditions(Cond1, Op1, _, Cond2)):-
@@ -187,10 +233,11 @@ parser([]) --> [].
 parser(Tree) --> stmt(Tree).
 
 %%%%%%%%%% Statment Rules %%%%%%%%%%%%
+stmt(statment(Tree)) --> if_stmt(Tree).
+stmt(statment(Tree)) --> do_while_stmt(Tree).
 stmt(statment(Tree)) --> while_stmt(Tree).
 stmt(statment(Tree)) --> assign_stmt(Tree).
-stmt(statment(Tree)) --> do_while_stmt(Tree).
-stmt(statment(Tree)) --> if_stmt(Tree).
+stmt(statment(Tree)) --> declare_stmt(Tree).
 stmt(statment(Tree)) --> ['{'], stmts(Tree), ['}'].
 
 %%%%%%%%%% Statments Rules %%%%%%%%%%%%
@@ -209,6 +256,14 @@ while_stmt(while(Conds, Stmt)) --> ['while'], ['('], conditions(Conds), [')'], s
 
 %%%%%%%%%% Assignment Rules %%%%%%%%%%%%
 assign_stmt(assign_stmt(ID, '=', Expr)) --> id(ID), ['='], expression(Expr), [';'].
+assign_stmt(assign_stmt(DataType, ID, '=', Expr)) --> datatype1(DataType), id(ID), ['='], expression(Expr), [';'].
+assign_stmt(assign_stmt(DataType1, DataType2, ID, '=', Expr)) --> datatype1(DataType1),datatype2(DataType2), id(ID), ['='], expression(Expr), [';'].
+assign_stmt(assign_stmt(DataType1, DataType2, DataType3, ID, '=', Expr)) --> datatype1(DataType1), datatype2(DataType2), datatype3(DataType3), id(ID), ['='], expression(Expr), [';'].
+
+%%%%%%%%%% Declare Rules %%%%%%%%%%%%
+declare_stmt(declare()) --> datatype1(DataType), id(ID), [';'].
+declare_stmt(declare()) --> datatype1(DataType1),datatype2(DataType2), id(ID), [';'].
+declare_stmt(declare()) --> datatype1(DataType1),datatype2(DataType2), datatype3(DataType3), id(ID), [';'].
 
 %%%%%%%%%% Condition Rules %%%%%%%%%%%%
 conditions(conditions(Cond, Op1, Op2, Conds)) --> condition(Cond), log_op(Op1), log_op(Op2), conditions(Conds).
@@ -228,11 +283,17 @@ term(term(Factor, Op, Term)) --> factor(Factor), mul_div_op(Op), term(Term).
 term(term(Factor)) --> factor(Factor).
 
 %%%%%%%%%% Factor Rules %%%%%%%%%%%%
+factor(factor('(', Expr, ')')) --> ['('], expression(Expr), [')'].
 factor(factor(Num)) --> num(Num).
 factor(factor(ID)) --> id(ID).
-factor(factor('(', Expr, ')')) --> ['('], expression(Expr), [')'].
+
+
 
 %%%%%%%%%% Terminals Rules %%%%%%%%%%%%
+datatype1(DataType) --> [DataType], {memberchk(DataType,['int','float','double','char','bool','long','short','signed','unsingned'])}
+datatype2(DataType) --> [DataType], {memberchk(DataType,['int','char','long','short'])}
+datatype3(DataType) --> [DataType], {memberchk(DataType,['int'])}
+
 num(Num) --> [Num], {number(Num)}.
 id(ID) --> [ID], {atom(ID)}.
 
