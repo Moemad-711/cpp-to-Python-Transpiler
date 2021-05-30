@@ -21,7 +21,7 @@ This project read c++ code from source file (e.g. test.txt or any other but plea
 
 ## Project Authors:
 * Mohammed Emadeldin Mahmoud Radwan Mohammed El-Seoudi
-* Mohammed Aly Ahmed AlY
-* Mahmoud Mamdouh Gaber
-* Mariam Mohammed Ibrahim
-* Nada Magdy Zaki
+* Mohammed Aly Ahmed Aly
+* Mahmoud Mamdouh Gaber Ali
+* Mariam Mohammed Ibrahim Abdel-Halim
+* Nada Magdy Zaki Ataya
