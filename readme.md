@@ -5,8 +5,8 @@ This project read c++ code from source file (e.g. test.txt or any other but plea
 ## The project is written in prolog and support the following statements:
 
 * Signle Line Variable Declarations (e.g. int X;)
-* Assignment Statements (e.g. x = y + 1)
-* Assignment Statements with Variable Declaration (e.g. int x = y + 1)
+* Assignment Statements (e.g. x = y + 1;)
+* Assignment Statements with Variable Declaration (e.g. int x = y + 1;)
 * While Statements 
 * Do While Statments
 * If Statements 
