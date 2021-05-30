@@ -84,12 +84,6 @@ write_new_lang(Stream, if(Conds, Stmt1, Else, Stmt2)):-
 	write_new_lang(Stream, Stmt1),
 	(memberchk(Else, ['else']), write(Stream, 'else :\n'), write_new_lang(Stream,Stmt2)).
 
-write_new_lang(Stream, assign_stmt(_,_,_,ID, Equal, Expr)):-
-	write(Stream, ID),
-	write(Stream, Equal),
-	write_new_lang(Stream, Expr),
-	nl(Stream).
-
 %%% Write Do_While_Stmt %%%
 write_new_lang(Stream, do_while(Stmt, Conds)):-
 	write(Stream, 'while  True :\n'),
@@ -135,12 +129,7 @@ write_new_lang(Stream, assign_stmt(_,_,_,ID, Equal, Expr)):-
 	write_new_lang(Stream, Expr),
 	nl(Stream).
 
-%%% Write Assign_Stmt %%%
-write_new_lang(Stream, declare(ID, Equal, Expr)):-
-	write(Stream, ID),
-	write(Stream, '= None'),
-	nl(Stream).
-
+%%% Write Declare_Stmt %%%
 write_new_lang(Stream, declare(_,ID)):-
 	write(Stream, ID),
 	write(Stream, '= None'),
@@ -290,9 +279,9 @@ factor(factor(ID)) --> id(ID).
 
 
 %%%%%%%%%% Terminals Rules %%%%%%%%%%%%
-datatype1(DataType) --> [DataType], {memberchk(DataType,['int','float','double','char','bool','long','short','signed','unsingned'])}
-datatype2(DataType) --> [DataType], {memberchk(DataType,['int','char','long','short'])}
-datatype3(DataType) --> [DataType], {memberchk(DataType,['int'])}
+datatype1(DataType) --> [DataType], {memberchk(DataType,['int','float','double','char','bool','long','short','signed','unsingned'])}.
+datatype2(DataType) --> [DataType], {memberchk(DataType,['int','char','long','short'])}.
+datatype3(DataType) --> [DataType], {memberchk(DataType,['int'])}.
 
 num(Num) --> [Num], {number(Num)}.
 id(ID) --> [ID], {atom(ID)}.
