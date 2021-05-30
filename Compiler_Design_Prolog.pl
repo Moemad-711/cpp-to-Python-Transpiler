@@ -261,9 +261,9 @@ assign_stmt(assign_stmt(DataType1, DataType2, ID, '=', Expr)) --> datatype1(Data
 assign_stmt(assign_stmt(DataType1, DataType2, DataType3, ID, '=', Expr)) --> datatype1(DataType1), datatype2(DataType2), datatype3(DataType3), id(ID), ['='], expression(Expr), [';'].
 
 %%%%%%%%%% Declare Rules %%%%%%%%%%%%
-declare_stmt(declare()) --> datatype1(DataType), id(ID), [';'].
-declare_stmt(declare()) --> datatype1(DataType1),datatype2(DataType2), id(ID), [';'].
-declare_stmt(declare()) --> datatype1(DataType1),datatype2(DataType2), datatype3(DataType3), id(ID), [';'].
+declare_stmt(declare(DataType, ID)) --> datatype1(DataType), id(ID), [';'].
+declare_stmt(declare(DataType1, DataType2, ID)) --> datatype1(DataType1),datatype2(DataType2), id(ID), [';'].
+declare_stmt(declare(DataType1, DataType2, DataType3, ID)) --> datatype1(DataType1),datatype2(DataType2), datatype3(DataType3), id(ID), [';'].
 
 %%%%%%%%%% Condition Rules %%%%%%%%%%%%
 conditions(conditions(Cond, Op1, Op2, Conds)) --> condition(Cond), log_op(Op1), log_op(Op2), conditions(Conds).
